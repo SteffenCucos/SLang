@@ -1,7 +1,10 @@
 import sys
 
-import ply.lex as lex
+from typing import List
+
+import ply.lex
 from ply.lex import PlyLogger as Logger
+from ply.lex import LexToken as Token
 
 class Lexer:
     '''
@@ -18,7 +21,7 @@ class Lexer:
         'DIVIDE',
         'MULTIPLY',
         'EQUALS'
-    ]
+    ] # type : List[str]
 
     t_PLUS = r'\+'
     t_MINUS = r'\-'
@@ -27,30 +30,30 @@ class Lexer:
     t_EQUALS = r'\='
     t_ignore = r' '
 
-    def t_FLOAT(self, t):
+    def t_FLOAT(self, t: Token):
         r'\d+\.\d+'
         t.value = float(t.value)
         return t
 
-    def t_INT(self, t):
+    def t_INT(self, t: Token):
         r'\d+'
         t.value = int(t.value)
         return t
 
-    def t_NAME(self, t):
+    def t_NAME(self, t: Token):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = 'NAME'
         return t
 
-    def t_error(self, t):
+    def t_error(self, t: Token):
         print("Illegal characters!")
         t.lexer.skip(1)
 
     def __init__(self):
         logger = Logger(sys.stdout)
-        self.lexer = lex.lex(debuglog=logger, errorlog=logger, module=self)
+        self.lexer = ply.lex.lex(debuglog=logger, errorlog=logger, module=self)
 
-    def tokenize(self, input):
+    def tokenize(self, input: str):
         self.lexer.input(input)
         while token := self.lexer.token():
             yield token
