@@ -1,10 +1,13 @@
-import sys
-
 from typing import List
+import inspect
+
+from logger import Logger
 
 import ply.lex
-from ply.lex import PlyLogger as Logger
 from ply.lex import LexToken as Token
+
+def printCaller():
+    print(inspect.stack()[1][3])
 
 class Lexer:
     '''
@@ -30,30 +33,35 @@ class Lexer:
     t_EQUALS = r'\='
     t_ignore = r' '
 
-    def t_FLOAT(self, t: Token):
+    def t_FLOAT(self, t: Token) -> Token:
         r'\d+\.\d+'
         t.value = float(t.value)
+        printCaller()
         return t
 
-    def t_INT(self, t: Token):
+    def t_INT(self, t: Token) -> Token:
         r'\d+'
         t.value = int(t.value)
+        printCaller()
         return t
 
-    def t_NAME(self, t: Token):
+    def t_NAME(self, t: Token) -> Token:
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = 'NAME'
+        printCaller()
         return t
 
-    def t_error(self, t: Token):
-        print("Illegal characters!")
+    def t_error(self, t: Token) -> Token:
+        #print("Illegal characters!")
+        printCaller()
         t.lexer.skip(1)
 
-    def __init__(self):
-        logger = Logger(sys.stdout)
-        self.lexer = ply.lex.lex(debuglog=logger, errorlog=logger, module=self)
+    def __init__(self, logger: Logger = None):
+        self.logger = logger
+        self.lexer = ply.lex.lex(debuglog=self.logger, errorlog=self.logger, module=self)
 
     def tokenize(self, input: str):
+        self.logger.info("Tokenizing: '" + input + "'")
         self.lexer.input(input)
         while token := self.lexer.token():
             yield token

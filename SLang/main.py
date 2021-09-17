@@ -1,8 +1,10 @@
+import sys
 from lexer import Lexer
+from logger import Logger
+from Sparser import Parser
 
 def main():
     '''
-
     A language to describe a vena model.
         Types:
             Model
@@ -32,6 +34,8 @@ def main():
 				 Dim3
 			 Model 'Model 2'
 				 Dim3
+                 Dimension Period 'Period Name'
+                    Start Jan
 
 
     A compiler is made up of 3 parts
@@ -43,9 +47,10 @@ def main():
         A Code generator
             Takes an AST and generates code to run.
     '''
-    lexer = Lexer()
-    for token in lexer.tokenize("abc = 1+2*3"):
-        print(token)
+    logger = Logger(sys.stdout)
+    lexer = Lexer(logger)
+    parser = Parser(lexer, logger)
+    parser.parse("1.17+2.1*3.5?")
 
 
 if __name__ == "__main__":
