@@ -50,7 +50,7 @@ def main():
     logger = Logger(sys.stdout)
     lexer = Lexer(logger)
     parser = Parser(lexer, logger)
-    parser.parse("1.17+2.1*3.5?")
+    parser.parse("1.17+2.1*3.5")
 
 
 if __name__ == "__main__":
